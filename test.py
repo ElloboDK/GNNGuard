@@ -127,8 +127,8 @@ def main():
     """save the mettacked adj"""
     model.attack(features, adj, labels, idx_train, idx_unlabeled, perturbations, ll_constraint=False)
     modified_adj = model.modified_adj
-    # pickle.dump(modified_adj, open('saved_pk/mettack_modified_adj_cora2484_0.05fake.pk', 'wb'))
-    # print('modified_adj saved')
+    pickle.dump(modified_adj, open('saved_pk/mettack_modified_adj_cora2484_0.05fake.pk', 'wb'))
+    print('modified_adj saved')
 
     print('=== testing GCN on original(clean) graph ===')
     test(adj)
