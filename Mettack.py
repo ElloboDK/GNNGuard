@@ -42,7 +42,7 @@ from defense import GCN_attack
 
 SEED = 15
 DATASET = 'cora'
-PTB_RATE = 0.05
+PTB_RATE = 0.2
 MODEL = 'Meta-Self'
 GNNGUARD = False
 MODELNAME = 'GCN'
@@ -119,15 +119,19 @@ def test(adj):
     classifier.eval()
 
     # classifier.fit(features, adj, labels, idx_train, idx_val) # train with validation model picking
-    acc_test, output = classifier.test(idx_test)
-    return acc_test.item()
+    
+    # acc_test, output = classifier.test(idx_test)
+    acc_test = classifier.test(idx_test)
+    print(acc_test)
+
+    # return acc_test.item()
 
 def main():
     ''
     """save the mettacked adj"""
     model.attack(features, adj, labels, idx_train, idx_unlabeled, perturbations, ll_constraint=False)
     modified_adj = model.modified_adj
-    pickle.dump(modified_adj, open('saved_pk/mettack_modified_adj_cora2484_0.05fake.pk', 'wb'))
+    pickle.dump(modified_adj, open('saved_pk/mettack_modified_adj_cora2484_0.2fake.pk', 'wb'))
     print('modified_adj saved')
 
     print('=== testing GCN on original(clean) graph ===')
