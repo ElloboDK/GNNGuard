@@ -52,7 +52,7 @@ if scipy.sparse.issparse(features)==False:
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
 
 """add undirected edges, orgn-arxiv is directed graph, we transfer it to undirected closely following 
-https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-arxiv
+https://ogb.stanford.edu/docs/leader_nodeprop/# ogbn-arxiv
 """
 adj = adj + adj.T
 adj[adj>1] = 1
@@ -79,6 +79,9 @@ def main():
     model.attack(features, adj, labels, target_node, n_perturbations, direct=True)
     modified_adj = model.modified_adj
     modified_features = model.modified_features
+
+    print(modified_adj)
+    print(modified_features)
 
     print('=== testing GNN on original(clean) graph ===')
     test(adj, features, target_node,  attention=GNNGUARD)
