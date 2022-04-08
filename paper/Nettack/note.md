@@ -4,6 +4,8 @@
 
 KDD 2018 图神经网络对抗攻击开山之作
 
+[CSDN笔记](https://blog.csdn.net/weixin_49393427/article/details/111484560)
+
 整个图：Mettack
 
 单目标攻击：Nettack 通过攻击某个节点（攻击者 acttacker）实现让另一个节点（目标 target）的误分类
