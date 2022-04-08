@@ -64,7 +64,7 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 
 
-#### 保留图的结构结构性（固有特征）
+#### 保留图的结构性（固有特征）
 
 图结构最突出的特征是它的度分布，使用幂律分布来描述：
 
@@ -90,11 +90,39 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 ### 攻击
 
-代理模型 Surrogate model
+#### 代理模型 Surrogate model
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020122308594536.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80OTM5MzQyNw==,size_16,color_FFFFFF,t_70)
 
 为了能够量化扰动的效果，同时简便计算，所以提出了一个替代模型
 
 代理模型使用两层的GCN，把激活函数做了线性的替换
+
+#### 扰动评价
+
+代理模型损失函数：
+
+![image-20220408104413994](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220408104413994.png)
+
+目标：找到扰动的图损失最大
+
+![image-20220408104519597](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220408104519597.png)
+
+评分函数：
+
+![image-20220408104718368](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220408104718368.png)
+
+#### 算法
+
+![image-20220408144212971](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220408144212971.png)
+
+类似贪心思想，每次找到使得Loss最大的扰动
+
+缺点：由于是贪心思想，会陷入局部最优
+
+**想法**
+
+~~类似HoneyPot 蜜罐攻击的思想，认为制造类似梯度陷阱的漏洞，让攻击陷入其中~~
+
+图像数据比较大，能够进行陷阱制作但不影响模型效果，但是图结构不行，图的结构性是度分布。
 
