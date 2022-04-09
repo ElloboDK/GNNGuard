@@ -128,3 +128,38 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 图像数据比较大，能够进行陷阱制作但不影响模型效果，但是图结构不行，图的结构性是度分布。
 
+
+
+### 实现
+
+(i) the 10 nodes with highest margin of classification, i.e. they are clearly correctly classified
+
+(ii) the 10 nodes with lowest margin (but still correctly classified)
+
+(iii) 20 more nodes randomly
+
+直接攻击，Nettack
+
+影响攻击，Nettack-In（从目标的附近随机挑选5个节点作为攻击者）
+
+
+
+#### 效果
+
+分类正确率：
+
+![image-20220409160157006](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220409160157006.png)
+
+直接攻击的效果要比推理攻击更好
+
+- FGSM，快速梯度下降法，基于梯度的方法应用于离散数据并不是一个好的选择，实验表明在邻接矩阵中改变元素时，梯度和实际的损失变化不一致
+- RND，改变图的结构，随机采样点然后添加边
+
+分类效果图：
+
+![image-20220409160658386](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220409160658386.png)
+
+
+
+![image-20220409161301789](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220409161301789.png)
+
