@@ -159,7 +159,17 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 ![image-20220409160658386](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220409160658386.png)
 
-​	
+不同目标度数的分类精度：
+
+度数越高越难受到攻击
+
+![image-20220410152735762](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220410152735762.png)
+
+知识受限的情况下，攻击效果
+
+知识受限：攻击时候替代模型只在目标节点附近的一定区域内训练
 
 ![image-20220409161301789](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220409161301789.png)
+
+
 
