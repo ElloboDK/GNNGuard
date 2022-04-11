@@ -209,5 +209,5 @@ def select_nodes(num_target = 10):
 
 
 if __name__ == '__main__':
-    # main()
-    multi_test()
+    main()
+    # multi_test()
