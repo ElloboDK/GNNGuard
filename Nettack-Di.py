@@ -6,13 +6,12 @@ from deeprobust.graph.targeted_attack import Nettack
 from deeprobust.graph.utils import *
 from deeprobust.graph.data import Dataset
 import argparse
-from defense import * # GCN, GAT, GIN, JK, GCN_attack,accuracy_1
+from deeprobust.graph.defense import * # GCN, GAT, GIN, JK, GCN_attack,accuracy_1
 from tqdm import tqdm
 import scipy
 import numpy as np
 from sklearn.preprocessing import normalize
 import pickle
-from defense.basicfunction import accuracy_1
 
 
 # parser = argparse.ArgumentParser()
