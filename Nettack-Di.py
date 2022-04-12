@@ -78,8 +78,8 @@ def main():
     modified_adj = model.modified_adj
     modified_features = model.modified_features
 
-    print(modified_adj)
-    print(modified_features)
+    # print(modified_adj)
+    # print(modified_features)
 
     print('=== testing GNN on original(clean) graph ===')
     test(adj, features, target_node,  attention=GNNGUARD)
