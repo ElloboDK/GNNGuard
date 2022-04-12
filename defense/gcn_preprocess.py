@@ -5,7 +5,7 @@ import torch
 from torch.nn.parameter import Parameter
 from torch.nn.modules.module import Module
 from deeprobust.graph import utils
-from deeprobust.graph.defense import GCN
+from deeprobust.graph.defense import GCN_ogbn, GAT_ogbn, GIN_ogbn,GCN
 
 from tqdm import tqdm
 import scipy.sparse as sp

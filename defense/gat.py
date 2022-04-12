@@ -16,7 +16,7 @@ from torch_geometric.nn import GINConv, global_add_pool, GATConv, GCNConv, ChebC
 from torch.nn import Sequential, Linear, ReLU
 from sklearn.preprocessing import normalize
 from sklearn.metrics import f1_score
-from .basicfunction import att_coef
+from deeprobust.graph.defense.basicfunction import att_coef
 from scipy.sparse import lil_matrix
 
 class GraphConvolution(Module):

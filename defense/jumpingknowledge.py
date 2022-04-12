@@ -16,7 +16,7 @@ from torch.nn import Sequential, Linear, ReLU
 from scipy.sparse import lil_matrix
 from sklearn.preprocessing import normalize
 from sklearn.metrics import f1_score
-from .basicfunction import att_coef
+from deeprobust.graph.defense.basicfunction import att_coef
 
 
 class JK(nn.Module):
