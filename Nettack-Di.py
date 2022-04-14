@@ -74,11 +74,12 @@ model = model.to(device)
 def main():
     degrees = adj.sum(0).A1
     # How many perturbations to perform. Default: Degree of the node
-    n_perturbations = int(degrees[target_node])
+    # n_perturbations = int(degrees[target_node])
+    n_perturbations = 10
 
-    # n_perturbations = 100
+    print("n_perturbations: %s" %n_perturbations)
 
-    # # indirect attack/ influencer attack
+    # indirect attack/ influencer attack
     model.attack(features, adj, labels, target_node, n_perturbations, direct=True)
     modified_adj = model.modified_adj
     modified_features = model.modified_features
