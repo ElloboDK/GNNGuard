@@ -1,28 +1,29 @@
-import imp
 import torch
-# import sys
+import sys
 # sys.path.insert(0, '/n/scratch2/xz204/Dr37/lib/python3.7/site-packages')
+import numpy as np
+import torch.nn.functional as F
+import torch.optim as optim
+# from deeprobust.graph.defense import GCN, GCNSVD, GCNJaccard, RGCN, GCN_attack, att_coef
 from deeprobust.graph.targeted_attack import Nettack
 from deeprobust.graph.utils import *
 from deeprobust.graph.data import Dataset
 import argparse
-from deeprobust.graph.defense import * # GCN, GAT, GIN, JK, GCN_attack,accuracy_1
+from deeprobust.graph.defense import *
 from tqdm import tqdm
 import scipy
-import numpy as np
 from sklearn.preprocessing import normalize
 import pickle
 
 
 # parser = argparse.ArgumentParser()
-# parser.add_argument('--seed', type=int, default=14, help='Random seed.')
+# parser.add_argument('--seed', type=int, default=14, help='seed.')
 # # cora and citeseer are binary, pubmed has not binary features
 # parser.add_argument('--dataset', type=str, default='citeseer', choices=['cora', 'cora_ml', 'citeseer', 'polblogs', 'pubmed'], help='dataset')
 # parser.add_argument('--ptb_rate', type=float, default=0.05,  help='pertubation rate')
 # parser.add_argument('--modelname', type=str, default='GCN',  choices=['GCN', 'GAT','GIN', 'JK'])
 # parser.add_argument('--defensemodel', type=str, default='GCNJaccard',  choices=['GCNJaccard', 'RGCN', 'GCNSVD'])
 # parser.add_argument('--GNNGuard', type=bool, default=False,  choices=[True, False])
-# parser.add_argument('--DPlabel', type=int, default=9,  help='0-10')
 
 # args = parser.parse_args()
 # args.cuda = torch.cuda.is_available()
@@ -34,7 +35,6 @@ GNNGUARD = False
 MODELNAME = 'GCN'
 
 
-# device = "cpu"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("You are running: %s" %device)
 
@@ -44,16 +44,15 @@ if torch.cuda.is_available():
     torch.cuda.manual_seed(SEED)
 
 data = Dataset(root='./Datasets/', name=DATASET)
-adj, features, labels = data.adj, data.features, data.labels
 
+adj, features, labels = data.adj, data.features, data.labels
 if scipy.sparse.issparse(features)==False:
     features = scipy.sparse.csr_matrix(features)
 
 """set the number of training/val/testing nodes"""
 idx_train, idx_val, idx_test = data.idx_train, data.idx_val, data.idx_test
-
 """add undirected edges, orgn-arxiv is directed graph, we transfer it to undirected closely following 
-https://ogb.stanford.edu/docs/leader_nodeprop/# ogbn-arxiv
+https://ogb.stanford.edu/docs/leader_nodeprop/#ogbn-arxiv
 """
 adj = adj + adj.T
 adj[adj>1] = 1
@@ -66,7 +65,7 @@ surrogate = surrogate.to(device)
 surrogate.fit(features, adj, labels, idx_train, train_iters=201)  # change this train_iters to 201: train_iters=201
 
 # Setup Attack Model
-target_node = 2
+target_node = 859
 
 model = Nettack(surrogate, nnodes=adj.shape[0], attack_structure=True, attack_features=False, device=device)
 model = model.to(device)
@@ -76,15 +75,10 @@ def main():
     # How many perturbations to perform. Default: Degree of the node
     n_perturbations = int(degrees[target_node])
 
-    # n_perturbations = 100
-
     # # indirect attack/ influencer attack
-    model.attack(features, adj, labels, target_node, n_perturbations, direct=True)
+    model.attack(features, adj, labels, target_node, n_perturbations, direct=False, n_influencers=5)
     modified_adj = model.modified_adj
     modified_features = model.modified_features
-
-    # print(modified_adj)
-    # print(modified_features)
 
     print('=== testing GNN on original(clean) graph ===')
     test(adj, features, target_node,  attention=GNNGUARD)
@@ -93,18 +87,18 @@ def main():
     test(modified_adj, modified_features, target_node,attention=GNNGUARD)
 
 
-def test(adj, features, target_node, attention=True):
+def test(adj, features, target_node, attention=False):
     ''
     """test on GCN """
     """model_name could be 'GCN', 'GAT', 'GIN','JK'  """
     # for orgn-arxiv: nhid =256, layers =3, epoch =500
 
-    gcn = globals()[MODELNAME](nfeat=features.shape[1], nhid=256, nclass=labels.max().item() + 1,
+    gcn = globals()[MODELNAME](nfeat=features.shape[1], nhid=16,  nclass=labels.max().item() + 1, dropout=0.5,
               device=device)
     gcn = gcn.to(device)
     gcn.fit(features, adj, labels, idx_train, idx_val=idx_val,
             idx_test=idx_test,
-            attention=attention, verbose=True, train_iters=81)
+            attention=attention, verbose=True, train_iters=201)
     gcn.eval()
     _, output = gcn.test(idx_test=idx_test)
 
@@ -121,19 +115,22 @@ def multi_test():
     cnt = 0
     degrees = adj.sum(0).A1
     node_list = select_nodes(num_target=10)
+    # node_list = [439, 1797]
     print(node_list)
 
     num = len(node_list)
     print('=== Attacking %s nodes respectively ===' % num)
     num_tar = 0
     for target_node in tqdm(node_list):
+        # """for test"""
+        # target_node = 419
         n_perturbations = int(degrees[target_node])
         if n_perturbations <1:  # at least one perturbation
             continue
 
         model = Nettack(surrogate, nnodes=adj.shape[0], attack_structure=True, attack_features=False, device=device)
         model = model.to(device)
-        model.attack(features, adj, labels, target_node, n_perturbations, direct=True, verbose=False)
+        model.attack(features, adj, labels, target_node, n_perturbations, direct=False, n_influencers=5, verbose=False)
         modified_adj = model.modified_adj
         modified_features = model.modified_features
         acc = single_test(modified_adj, modified_features, target_node)
@@ -147,13 +144,13 @@ attention = GNNGUARD
 
 def single_test(adj, features, target_node):
     'ALL the baselines'
-
     # """defense models"""
     # classifier = globals()[args.defensemodel](nnodes=adj.shape[0], nfeat=features.shape[1], nhid=16,
     #                                           nclass=labels.max().item() + 1, dropout=0.5, device=device)
 
-    # ''' test on GCN (poisoning attack), model could be GCN, GAT, GIN'''
+    ''' test on GCN (poisoning attack), model could be GCN, GAT, GIN'''
     classifier = globals()[MODELNAME](nfeat=features.shape[1], nhid=16, nclass=labels.max().item() + 1, dropout=0.5, device=device)
+    print('modelname', MODELNAME)
     classifier = classifier.to(device)
     classifier.fit(features, adj, labels, idx_train,
                    idx_val=idx_val,
@@ -169,6 +166,52 @@ def single_test(adj, features, target_node):
     return acc_test.item()
 
 """=======Basic Functions============="""
+from sklearn.metrics.pairwise import euclidean_distances
+from sklearn.metrics import jaccard_score
+import numpy as np
+# def att_coef(fea, edge_index):
+#     # the weights of self-loop
+#     edge_index = edge_index.tocoo()
+#     fea = fea.todense()
+#     fea_start, fea_end = fea[edge_index.row], fea[edge_index.col]
+#     isbinray = np.array_equal(fea, fea.astype(bool)) #check is the fea are binary
+#     np.seterr(divide='ignore', invalid='ignore')
+#     if isbinray:
+#         fea_start, fea_end = fea_start.T, fea_end.T
+#         sim = jaccard_score(fea_start, fea_end, average=None)  # similarity scores of each edge
+#     # else:
+#     #     sim_matrix = euclidean_distances(X=fea, Y=fea)
+#     #     sim = sim_matrix[edge_index.row, edge_index.col]
+#     #     w = 1 / sim
+#     #     w[np.isinf(w)] = 0
+#     #     sim = w
+#
+#     """build a attention matrix"""
+#     att_dense = np.zeros([fea.shape[0], fea.shape[0]], dtype=np.float32)
+#     row, col = edge_index.row, edge_index.col
+#     att_dense[row, col] = sim
+#     if att_dense[0, 0] == 1:
+#         att_dense = att_dense - np.diag(np.diag(att_dense))
+#     # normalization, make the sum of each row is 1
+#     att_dense_norm = normalize(att_dense, axis=1, norm='l1')
+#     # np.seterr(divide='ignore', invalid='ignore')
+#     # att_dense_norm = np.nan_to_num(att_dense / np.sum(att_dense, axis=0)[:, None])
+#
+#     if att_dense_norm[0, 0] == 0:
+#         # the weights of self-loop
+#         degree = (att_dense != 0).sum(1)[:, None]
+#         lam = np.float32(1 / (degree + 1))  # degree +1 is to add itself
+#         lam = [x[0] for x in lam]
+#         self_weight = np.diag(lam)
+#         att = att_dense_norm + self_weight  # add the self loop
+#     else:
+#         att = att_dense_norm
+#     att = np.exp(att) - 1  # make it exp to enhance the difference among edge weights
+#     att_dense[att_dense <= 0.1] = 0  # set the att <0.1 as 0, this will decrease the accuracy for clean graph
+#
+#     att_lil = scipy.sparse.lil_matrix(att)
+#     return att_lil
+
 def select_nodes(num_target = 10):
     '''
     selecting nodes as reported in nettack paper:
@@ -199,6 +242,7 @@ def select_nodes(num_target = 10):
         aa = node_y==y
         outlier_score = 1- aa.sum()/len(aa)
         if outlier_score >=0.5:
+            # print('outlier_score', outlier_score) # the lower, the better
             continue
 
         margin_dict[idx] = margin
@@ -208,7 +252,7 @@ def select_nodes(num_target = 10):
     other = [x for x, y in sorted_margins[num_target: -num_target]]
     other = np.random.choice(other, 2*num_target, replace=False).tolist()
 
-    return other + high + low
+    return other + low+ high
 
 
 if __name__ == '__main__':
