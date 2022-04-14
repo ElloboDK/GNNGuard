@@ -1,6 +1,6 @@
-import imp
 import torch
 import sys
+sys.path.insert(0, '/n/scratch2/xz204/Dr37/lib/python3.7/site-packages')
 import numpy as np
 import torch.nn.functional as F
 import torch.optim as optim
@@ -16,7 +16,7 @@ from sklearn.metrics import jaccard_score
 from sklearn.preprocessing import normalize
 import scipy
 import numpy as np
-from ..defense import GCN_attack
+
 
 
 parser = argparse.ArgumentParser()

@@ -1,8 +1,10 @@
 import torch
 import sys
+# sys.path.insert(0, '/n/scratch2/xz204/Dr37/lib/python3.7/site-packages')
 import numpy as np
 import torch.nn.functional as F
 import torch.optim as optim
+from deeprobust.graph.defense import *
 from deeprobust.graph.global_attack import MetaApprox, Metattack
 from deeprobust.graph.utils import *
 from deeprobust.graph.defense import *
@@ -14,7 +16,7 @@ from sklearn.metrics import jaccard_score
 from sklearn.preprocessing import normalize
 import scipy
 import numpy as np
-from defense import GCN_attack
+
 
 # parser = argparse.ArgumentParser()
 # parser.add_argument('--no-cuda', action='store_true', default=False,
@@ -42,7 +44,7 @@ from defense import GCN_attack
 
 SEED = 15
 DATASET = 'cora'
-PTB_RATE = 0.1
+PTB_RATE = 0.05
 MODEL = 'Meta-Self'
 GNNGUARD = False
 MODELNAME = 'GCN'
@@ -120,22 +122,24 @@ def test(adj):
 
     # classifier.fit(features, adj, labels, idx_train, idx_val) # train with validation model picking
     
-    # acc_test, output = classifier.test(idx_test)
-    acc_test = classifier.test(idx_test)
-    print(acc_test)
+    acc_test, output = classifier.test(idx_test)
+    # acc_test = classifier.test(idx_test)
+    # print(acc_test)
 
-    # return acc_test.item()
+    return acc_test.item()
 
 def main():
     ''
-    # save the mettacked adj
-    # model.attack(features, adj, labels, idx_train, idx_unlabeled, perturbations, ll_constraint=False)
-    # modified_adj = model.modified_adj
-    # pickle.dump(modified_adj, open(f'saved_pk/mettack_modified_adj_cora2484_{PTB_RATE}fake.pk', 'wb'))
+    '''mettack'''
+    model.attack(features, adj, labels, idx_train, idx_unlabeled, perturbations, ll_constraint=False)
+    modified_adj = model.modified_adj
 
+    '''save the mettacked adj'''
+    # pickle.dump(modified_adj, open(f'saved_pk/mettack_modified_adj_cora2484_{PTB_RATE}fake.pk', 'wb'))
     # print('modified_adj saved')
 
-    modified_adj = pickle.load(open(f'saved_pk/mettack_modified_adj_cora2484_{PTB_RATE}fake.pk', 'rb'))
+    '''load the mettacked adj'''
+    # modified_adj = pickle.load(open(f'saved_pk/mettack_modified_adj_cora2484_{PTB_RATE}fake.pk', 'rb'))
 
     print('=== testing GCN on original(clean) graph ===')
     test(adj)
