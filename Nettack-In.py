@@ -65,7 +65,7 @@ surrogate = surrogate.to(device)
 surrogate.fit(features, adj, labels, idx_train, train_iters=201)  # change this train_iters to 201: train_iters=201
 
 # Setup Attack Model
-target_node = 859
+target_node = 835
 
 model = Nettack(surrogate, nnodes=adj.shape[0], attack_structure=True, attack_features=False, device=device)
 model = model.to(device)
@@ -73,8 +73,9 @@ model = model.to(device)
 def main():
     degrees = adj.sum(0).A1
     # How many perturbations to perform. Default: Degree of the node
-    n_perturbations = int(degrees[target_node])
-
+    # n_perturbations = int(degrees[target_node])
+    n_perturbations = 8
+    
     # # indirect attack/ influencer attack
     model.attack(features, adj, labels, target_node, n_perturbations, direct=False, n_influencers=5)
     modified_adj = model.modified_adj
@@ -93,7 +94,7 @@ def test(adj, features, target_node, attention=False):
     """model_name could be 'GCN', 'GAT', 'GIN','JK'  """
     # for orgn-arxiv: nhid =256, layers =3, epoch =500
 
-    gcn = globals()[MODELNAME](nfeat=features.shape[1], nhid=16,  nclass=labels.max().item() + 1, dropout=0.5,
+    gcn = globals()[MODELNAME](nfeat=features.shape[1], nhid=256,  nclass=labels.max().item() + 1, dropout=0.5,
               device=device)
     gcn = gcn.to(device)
     gcn.fit(features, adj, labels, idx_train, idx_val=idx_val,
