@@ -4,9 +4,7 @@
 
 KDD 2018 图神经网络对抗攻击开山之作
 
-[CSDN笔记](https://blog.csdn.net/weixin_49393427/article/details/111484560)
-
-整个图：Mettack
+[CSDN笔记]: https://blog.csdn.net/weixin_49393427/article/details/111484560
 
 单目标攻击：Nettack 通过攻击某个节点（攻击者 acttacker）实现让另一个节点（目标 target）的误分类
 
@@ -79,6 +77,16 @@ KDD 2018 图神经网络对抗攻击开山之作
 最大似然估计：
 
 ![image-20220405100642040](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220405100642040.png)
+
+citeseer数据集度分布：
+
+![output](C:\Users\Jin Xin Lei\Documents\Postgraduate\Adversial Neural Network\GNNGuard\images\output.png)
+
+想法：
+
+- [ ] 拟合幂律分布，对每个节点通过一定方式进行评估，作为权重加入信息传递函数
+
+
 
 #### 保留节点特征
 
