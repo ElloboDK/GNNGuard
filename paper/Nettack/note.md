@@ -29,7 +29,7 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201223085735256.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80OTM5MzQyNw==,size_16,color_FFFFFF,t_70)
 
-设定攻击范围Δ：
+设定攻击范围Δ，可执行的攻击数量复杂度是 ![[公式]](https://www.zhihu.com/equation?tex=O%28N%5E%7B2%5CDelta%7D%29)：
 
 ![image-20220330135915735](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220330135915735.png)
 
@@ -80,11 +80,13 @@ KDD 2018 图神经网络对抗攻击开山之作
 
 citeseer数据集度分布：
 
+![output-2](C:\Users\Jin Xin Lei\Documents\Postgraduate\Adversial Neural Network\GNNGuard\images\output-2.png)
+
 ![output](C:\Users\Jin Xin Lei\Documents\Postgraduate\Adversial Neural Network\GNNGuard\images\output.png)
 
 想法：
 
-- [ ] ~~拟合幂律分布，对每个节点通过一定方式进行评估，作为权重加入信息传递函数~~
+~~拟合幂律分布，对每个节点通过一定方式进行评估，作为权重加入信息传递函数~~
 
 
 

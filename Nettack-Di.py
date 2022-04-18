@@ -34,8 +34,8 @@ GNNGUARD = False
 MODELNAME = 'GCN'
 
 
-# device = "cpu"
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = "cpu"
+# device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print("You are running: %s" %device)
 
 np.random.seed(SEED)
@@ -66,7 +66,7 @@ surrogate = surrogate.to(device)
 surrogate.fit(features, adj, labels, idx_train, train_iters=201)  # change this train_iters to 201: train_iters=201
 
 # Setup Attack Model
-target_node = 835
+target_node = 1104
 
 model = Nettack(surrogate, nnodes=adj.shape[0], attack_structure=True, attack_features=False, device=device)
 model = model.to(device)
