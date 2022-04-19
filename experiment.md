@@ -8,6 +8,8 @@
 
 nhid=256
 
+layer=3
+
 dropout=0.5
 
 模型准确率：0.7518

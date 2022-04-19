@@ -1,34 +1,8 @@
-# GNNGUARD
-
-## 攻击 
-
-- 直接目标攻击	攻击者对接触目标节点的边缘进行扰动
-- 影响目标攻击    攻击者只对目标节点的邻居的边缘进行操作
-- 非目标攻击
-
-[9,10]
-
-在训练时间扰乱图的中毒攻击（如Nettack[8]）和在测试时间扰乱图的规避攻击（如RL-S2V[32]）
-
-Nettack[8]通过修改图结构（即结构攻击）和节点属性（即特征攻击）产生扰动，使扰动最大限度地破坏下游GNN的预测。Bojcheshki等人[34]得出了毒害图结构的对抗性扰动。同样，Zügner等人[30]通过使用元梯度来解决双级问题，提出了一个非目标中毒攻击者。
-
-## 防御 
-
-
-
-[9,12,15]
-
-GNN-Jaccard[17]是一种防御方法。它预先处理了图的邻接矩阵以识别被操纵的边。
-
-Tang等人[20]通过迁移学习提高了GNN对中毒攻击的鲁棒性，但有一个局限性，即在训练过程中需要几个来自类似领域的未受干扰的图。
-
-但是它们都没有考虑如何防御异质图的对抗性攻击。
-
-
-
 ## **GNNGUARD: Defending Graph Neural Networks against Adversarial Attacks**
 
-2006.08149
+NeurIPS 2020
+
+DOI:2006.08149
 
 ### 背景知识
 
@@ -51,33 +25,28 @@ GNN计算公式：
 $$
 f = (MSG,AGG,UPD)
 $$
-MSG:获取周围节点信息
+MSG:消息传递函数，计算两个节点的特征以及连接信息 ![image-20220419125030162](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419125030162.png)![image-20220419125039440](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419125039440.png)
 
-AGG:计算
+AGG:聚合函数，将节点收到的所有消息聚合起来 ![image-20220419125059523](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419125059523.png)
 
-UPD:更新迭代参数
+UPD:更新函数，将节点特征和聚合信息传递到下一层![image-20220419125114107](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419125114107.png)
 
 ![image-20220225150752480](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220225150752480.png)
 
-### 做了什么：
+### 核心思想
 
-半监督的方法
+GNNGUARD将一个现有的GNN模型作为输入。它通过修改GNN的**神经信息传递操作符**来减轻不利影响。特别是，它修改了**信息传递结构**，使修改后的模型对对抗性扰动具有鲁棒性，同时模型保持其表示学习能力
 
-GNNGUARD将一个现有的GNN模型作为输入。它通过修改GNN的**神经信息传递操作符**来减轻不利影响。特别是，它修改了**信息传递结构**，使修改后的模型对对抗性扰动具有鲁棒性，同时模型保持其表示学习能力。
+为此，GNNGUARD开发了两个关键组件，**用于估计每个节点的邻居重要性**，并通过一个有效的**记忆层粗化图**
 
-为此，GNNGUARD开发了两个关键组件，**用于估计每个节点的邻居重要性**，并通过一个有效的**记忆层粗化图**。
-
-- 前一个组件动态地调整节点的本地网络邻域的相关性，修剪可能的假边，并根据网络同源性理论为可疑的边分配较少的权重。
-
-- 后者通过保留GNN中前一层的部分记忆，稳定了图结构的演变。
+- 前一个组件动态地调整节点的本地网络邻域的相关性，修剪可能的假边，并根据网络同源性理论为可疑的边分配较少的权重
+- 后者通过保留GNN中前一层的部分记忆，稳定了图结构的演变![image-20220307125012629](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220307125012629.png)
 
 ### **Neighbor Importance Estimation**
 
 邻居节点的重要性估计
 
-和GAT的区别：相似节点（即具有相似特征或相似结构作用的节点）比不相似的节点更有可能相互作用的关系
-
-![image-20220307125012629](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220307125012629.png)
+和GAT的区别：相似节点（即具有相似特征或相似结构作用的节点）比不相似的节点更有可能相互作用的关系（同质性）
 
 计算方式：**余弦相似度**。在同亲图中，衡量节点特征之间的相似性；在异亲图中，衡量节点结构角色的相似性。
 
@@ -107,21 +76,63 @@ GNNGUARD将一个现有的GNN模型作为输入。它通过修改GNN的**神经�
 
 ![image-20220307141423614](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220307141423614.png)
 
-### **Overview**
-
-
-
-算法流程：
+### 算法流程
 
 ![image-20220307141649370](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220307141649370.png)
 
-实验数据：
+### 实验数据
+
+Nettack-Di攻击：
 
 ![image-20220307144421963](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220307144421963.png)
 
-想法：
+Nettack-In攻击和Mettack攻击：
 
-类似Honeypot的思想，制造一个陷阱，将攻击数据剔除。
+![image-20220419094216361](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419094216361.png)
 
-问题：如何制造陷阱？
+Mettack攻击：
+
+![image-20220419101515793](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419101515793.png)
+
+**graphlet degree vector**
+
+Graphlet是基础的由节点构成的基础子图单位，由两个节点开始
+
+![preview](https://pic3.zhimg.com/v2-bb7fedb4f94cec1a876d7f017339e332_r.jpg)
+
+由graphlet转换为节点的特征向量
+
+![preview](https://pic1.zhimg.com/v2-0a04a3bb143b1c4de4029089c55f6eac_r.jpg)
+
+构造了带有房屋形状的循环图，下图为例：
+
+合成的图包含1,000个节点 (没有节点特征，但每个节点有一个73维的小图向量），3200条无向边，以及 6个节点标签（即不同的结构角色）
+
+![image-20220419122038856](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419122038856.png)
+
+
+
+![image-20220419122411919](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419122411919.png)
+
+
+
+消融实验（测试各个组件之间的必要性）：
+
+![image-20220419100909798](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419100909798.png)
+
+原图上的准确率（现实中往往不知道图是否被攻击过）：
+
+![image-20220419101244549](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419101244549.png)
+
+
+
+**想法**（同质性）：
+
+1. 通过某种聚类的方法将节点分类，相似的节点会聚成一类。那么在一个类中边权重较高，类间的边权重较低
+
+2. 类似Honeypot的思想，制造一个陷阱，将攻击数据剔除。
+
+   如何制造陷阱？
+
+   陷阱的制造是否会降低模型准确率
 
