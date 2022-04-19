@@ -94,9 +94,9 @@ Mettack攻击：
 
 ![image-20220419101515793](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419101515793.png)
 
-**graphlet degree vector**
+#### **graphlet degree vector**
 
-Graphlet是基础的由节点构成的基础子图单位，由两个节点开始
+Graphlet（**连通的非同构子图**）是基础的由节点构成的基础子图单位，由两个节点开始
 
 ![preview](https://pic3.zhimg.com/v2-bb7fedb4f94cec1a876d7f017339e332_r.jpg)
 
@@ -114,6 +114,23 @@ Graphlet是基础的由节点构成的基础子图单位，由两个节点开始
 
 ![image-20220419122411919](C:\Users\Jin Xin Lei\AppData\Roaming\Typora\typora-user-images\image-20220419122411919.png)
 
+#### Structural roles in networks
+
+Role: 角色， 是对节点在网络中功能的描述， 是有相同结构特征的点，相同角色的节点并不一定直接相连，而Group/Communities(社群)， 是彼此相互密集连接的节点群；
+
+举了个例子，假定一个计算机系构建一个社交网络，其中：
+
+- 角色指： 教职、职员、学生；
+- 社群指： AILab、Info Lab、 Theory Lab等；
+
+![preview](https://pic2.zhimg.com/v2-3489a9eea7d6c0cfab9be4712d3bf179_r.jpg)
+
+如果节点u和节点v和所有其他节点有相同的关系，则说明节点u和节点v在**结构上等同**， 如下图中u和v完全相同；
+
+![img](https://pic3.zhimg.com/80/v2-52433a2b021410c0469deb9bba0d447a_720w.jpg)
+
+
+
 
 
 消融实验（测试各个组件之间的必要性）：
@@ -130,9 +147,11 @@ Graphlet是基础的由节点构成的基础子图单位，由两个节点开始
 
 1. 通过某种聚类的方法将节点分类，相似的节点会聚成一类。那么在一个类中边权重较高，类间的边权重较低
 
-2. 类似Honeypot的思想，制造一个陷阱，将攻击数据剔除。
+2. 从图的结构方面改进权重函数
 
-   如何制造陷阱？
+3. ~~类似Honeypot的思想，制造一个陷阱，将攻击数据剔除。~~
 
-   陷阱的制造是否会降低模型准确率
+   ~~如何制造陷阱？~~
+
+   ~~陷阱的制造是否会降低模型准确率~~
 

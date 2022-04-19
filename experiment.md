@@ -1,5 +1,3 @@
-# 实验
-
 ## Nettack
 
 攻击数量（n_perturbations）=节点度数
