@@ -179,6 +179,8 @@ class GCN(nn.Module):
         row, col = edge_index[0].cpu().data.numpy()[:], edge_index[1].cpu().data.numpy()[:]
 
         fea_copy = fea.cpu().data.numpy()
+
+        #TODO: 相似度计算公式修改
         sim_matrix = cosine_similarity(X=fea_copy, Y=fea_copy)  # try cosine similarity
         sim = sim_matrix[row, col]
         sim[sim<0.1] = 0
